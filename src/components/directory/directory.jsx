@@ -1,5 +1,5 @@
-import "./directory.styles.scss";
-import Category from "../category/category.component";
+import './directory.styles.scss';
+import Category from '../category/category.component';
 
 const Categories = ({ categories }) => {
   return (
