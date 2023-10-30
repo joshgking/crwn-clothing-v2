@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import { isCompositeComponent } from 'react-dom/test-utils';
@@ -75,3 +76,5 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
 
   return authUser;
 };
+
+export const signOutUser = async () => await signOut(auth);
