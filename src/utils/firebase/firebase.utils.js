@@ -9,7 +9,16 @@ import {
   signOut,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from 'firebase/firestore';
 import { isCompositeComponent } from 'react-dom/test-utils';
 
 // Your web app's Firebase configuration
@@ -38,14 +47,38 @@ export const signInUserWithEmailAndPassword = async (email, password) =>
 
 export const db = getFirestore();
 
+export const addCollectionDocuments = async (collectionKey, objectsToAdd) => {
+  const collectionRef = collection(db, collectionKey);
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log('done');
+};
+
+export const getCategoriesAndDocuments = async (limitNum) => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+
+    acc[title.toLowerCase()] = items;
+
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
+
 export const createUserDocumentFromAuth = async (userAuth, extraFields) => {
   const userDocRef = doc(db, 'users', userAuth.uid);
-
-  console.log('userDocRef', userDocRef);
-
   const userSnapshot = await getDoc(userDocRef);
-
-  console.log(userSnapshot);
 
   if (!userSnapshot.exists()) {
     const { displayName, email } = userAuth;
@@ -63,17 +96,13 @@ export const createUserDocumentFromAuth = async (userAuth, extraFields) => {
     }
   }
 
-  console.log('userDocRef', userDocRef);
-
   return userDocRef;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
-  console.log('createAuthUserWithEmailAndPassword', email, password);
   if (!email || !password) return;
 
   const authUser = await createUserWithEmailAndPassword(auth, email, password);
-  console.log('authUser', authUser);
 
   return authUser;
 };
