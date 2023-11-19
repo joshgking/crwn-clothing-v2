@@ -1,12 +1,14 @@
 import { useState } from 'react';
+
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import './sign-up-form.styles.scss';
 
 import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
 } from '../../utils/firebase/firebase.utils';
+
+import { SignUpContainer } from './sign-up-form.styles';
 
 const defaultFormFields = {
   displayName: '',
@@ -19,12 +21,15 @@ const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (password !== confirmPassword) {
       alert('passwords do not match');
-
       return;
     }
 
@@ -33,18 +38,15 @@ const SignUpForm = () => {
         email,
         password
       );
-      console.log('JUST DA user', user);
 
-      await createUserDocumentFromAuth(user, {
-        displayName,
-      });
-
-      setFormFields(defaultFormFields);
+      await createUserDocumentFromAuth(user, { displayName });
+      resetFormFields();
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
-        alert('Account already exists for this email.');
+        alert('Cannot create user, email already in use');
+      } else {
+        console.log('user creation encountered an error', error);
       }
-      console.log('error creating the user', error.message);
     }
   };
 
@@ -55,7 +57,7 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="sign-up-container">
+    <SignUpContainer>
       <h2>Don't have an account?</h2>
       <span>Sign up with your email and password</span>
       <form onSubmit={handleSubmit}>
@@ -67,6 +69,7 @@ const SignUpForm = () => {
           name="displayName"
           value={displayName}
         />
+
         <FormInput
           label="Email"
           type="email"
@@ -75,6 +78,7 @@ const SignUpForm = () => {
           name="email"
           value={email}
         />
+
         <FormInput
           label="Password"
           type="password"
@@ -83,6 +87,7 @@ const SignUpForm = () => {
           name="password"
           value={password}
         />
+
         <FormInput
           label="Confirm Password"
           type="password"
@@ -93,7 +98,7 @@ const SignUpForm = () => {
         />
         <Button type="submit">Sign Up</Button>
       </form>
-    </div>
+    </SignUpContainer>
   );
 };
 

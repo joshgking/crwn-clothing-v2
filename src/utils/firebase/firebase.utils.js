@@ -19,7 +19,6 @@ import {
   query,
   getDocs,
 } from 'firebase/firestore';
-import { isCompositeComponent } from 'react-dom/test-utils';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -32,7 +31,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({
@@ -42,7 +41,7 @@ googleProvider.setCustomParameters({
 export const auth = getAuth();
 export const signInWithGooglePopup = () =>
   signInWithPopup(auth, googleProvider);
-export const signInUserWithEmailAndPassword = async (email, password) =>
+export const signInAuthUserWithEmailAndPassword = async (email, password) =>
   signInWithEmailAndPassword(auth, email, password);
 
 export const db = getFirestore();
