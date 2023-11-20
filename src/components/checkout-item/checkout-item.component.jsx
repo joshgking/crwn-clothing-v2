@@ -12,6 +12,7 @@ import {
   Value,
   RemoveButton,
 } from './checkout-item.styles';
+import { BUTTON_TYPE_CLASSES } from '../button/button.component';
 
 const CheckoutItem = ({ cartItem }) => {
   const { name, imageUrl, price, quantity } = cartItem;
@@ -37,9 +38,7 @@ const CheckoutItem = ({ cartItem }) => {
         </Arrow>
       </Quantity>
       <Price> {price}</Price>
-      <RemoveButton buttonType="base" onClick={clearItemHandler}>
-        &#10005;
-      </RemoveButton>
+      <RemoveButton onClick={clearItemHandler}>&#10005;</RemoveButton>
     </CheckoutItemContainer>
   );
 };
